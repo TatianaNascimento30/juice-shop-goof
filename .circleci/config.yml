@@ -1,18 +1,18 @@
 version: 2.1
 
 executors:
-  snyk-executor:
+  node-executor:
     docker:
-      - image: snyk/snyk-cli:latest
+      - image: cimg/node:18.17.1  # Imagem oficial com Node.js e npm
     working_directory: ~/repo
 
 jobs:
   snyk-job:
-    executor: snyk-executor
+    executor: node-executor
     steps:
       - checkout
       - run:
-          name: Install Snyk
+          name: Install Snyk CLI
           command: npm install -g snyk
       - run:
           name: Test with Snyk Open Source
@@ -21,7 +21,7 @@ jobs:
           name: Test with Snyk Code
           command: snyk code test
       - run:
-          name: Monitor Snyk
+          name: Monitor with Snyk
           command: snyk monitor --all-projects
 
 workflows:
@@ -29,9 +29,3 @@ workflows:
   snyk-workflow:
     jobs:
       - snyk-job
-
-    jobs:
-      - test-node
-    # - deploy:
-    #     requires:
-    #       - test-node
