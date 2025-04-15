@@ -14,7 +14,7 @@ jobs:
       - run:
           name: Install Snyk CLI
           command: |
-            npm install -g snyk
+            npm install -g snyk --unsafe-perm
             snyk auth $SNYK_TOKEN
       - run:
           name: Test with Snyk Open Source
@@ -25,12 +25,6 @@ jobs:
       - run:
           name: Monitor with Snyk
           command: snyk monitor --all-projects
-
-workflows:
-  snyk-workflow:
-    jobs:
-      - snyk-job
-
 
 workflows:
   version: 2
