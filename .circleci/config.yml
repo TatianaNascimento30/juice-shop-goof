@@ -12,10 +12,11 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install Snyk CLI locally
-          command: |
-            npm install snyk --save-dev --unsafe-perm
-            snyk auth $SNYK_TOKEN
+          name: Install dependencies (local)
+          command: npm install snyk
+      - run:
+          name: Authenticate Snyk
+          command: npx snyk auth $SNYK_TOKEN
       - run:
           name: Test with Snyk Open Source
           command: npx snyk test --all-projects
@@ -31,3 +32,4 @@ workflows:
   snyk-workflow:
     jobs:
       - snyk-job
+
