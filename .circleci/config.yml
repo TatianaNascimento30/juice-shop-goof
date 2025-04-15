@@ -18,6 +18,9 @@ jobs:
             chmod +x ./snyk
             sudo mv ./snyk /usr/local/bin/
       - run:
+          name: Authenticate Snyk
+          command: snyk auth $SNYK_TOKEN
+      - run:
           name: Test with Snyk Open Source
           command: snyk test --all-projects
       - run:
