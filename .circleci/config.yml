@@ -1,40 +1,35 @@
-# This config was automatically generated from your source code
-# Stacks detected: cicd:github-actions:.github/workflows,deps:node:.,test:jest:
 version: 2.1
-orbs:
-  node: circleci/node@5
+
+executors:
+  snyk-executor:
+    docker:
+      - image: snyk/snyk-cli:latest
+    working_directory: ~/repo
+
 jobs:
-  test-node:
-    # Install node dependencies and run tests
-    executor: node/default
-    environment:
-      JEST_JUNIT_OUTPUT_DIR: ./test-results/
+  snyk-job:
+    executor: snyk-executor
     steps:
       - checkout
-      - node/install-packages:
-          cache-path: ~/project/node_modules
-          override-ci-command: npm install
       - run:
-          command: npm install jest-junit
+          name: Install Snyk
+          command: npm install -g snyk
       - run:
-          name: Run tests
-          command: npm run test --ci --runInBand --reporters=default --reporters=jest-junit
-      - store_test_results:
-          path: ./test-results/
-  deploy:
-    # This is an example deploy job, not actually used by the workflow
-    docker:
-      - image: cimg/base:stable
-    steps:
-      # Replace this with steps to deploy to users
+          name: Test with Snyk Open Source
+          command: snyk test --all-projects
       - run:
-          name: deploy
-          command: '#e.g. ./deploy.sh'
+          name: Test with Snyk Code
+          command: snyk code test
       - run:
-          name: found github actions config
-          command: ':'
+          name: Monitor Snyk
+          command: snyk monitor --all-projects
+
 workflows:
-  build-and-test:
+  version: 2
+  snyk-workflow:
+    jobs:
+      - snyk-job
+
     jobs:
       - test-node
     # - deploy:
