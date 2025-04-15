@@ -14,7 +14,7 @@ jobs:
       - run:
           name: Install Snyk CLI
           command: |
-            npm install -g snyk
+            sudo npm install -g snyk
             snyk auth $SNYK_TOKEN
       - run:
           name: Test with Snyk Open Source
