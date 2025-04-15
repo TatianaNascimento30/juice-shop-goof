@@ -3,7 +3,7 @@ version: 2.1
 executors:
   snyk-executor:
     docker:
-      - image: cimg/node:18.17.0  # Ou a versão do Node que seu projeto usa
+      - image: cimg/node:18.17.0  # ou a versão que seu projeto usa
     working_directory: ~/repo
 
 jobs:
@@ -14,11 +14,14 @@ jobs:
       - run:
           name: Install Snyk CLI
           command: |
-            npm install -g snyk
+            wget -O snyk https://static.snyk.io/cli/latest/snyk-linux
+            chmod +x ./snyk
+            sudo mv ./snyk /usr/local/bin/
       - run:
           name: Run Snyk Open Source Scan
           command: |
             npm install
+            snyk config set endpoint=https://api.us.snyk.io
             snyk auth "$SNYK_TOKEN"
             snyk test --org="$SNYK_ORG"
             snyk monitor --org="$SNYK_ORG"
@@ -30,10 +33,13 @@ jobs:
       - run:
           name: Install Snyk CLI
           command: |
-            npm install -g snyk
+            wget -O snyk https://static.snyk.io/cli/latest/snyk-linux
+            chmod +x ./snyk
+            sudo mv ./snyk /usr/local/bin/
       - run:
           name: Run Snyk Code Scan
           command: |
+            snyk config set endpoint=https://api.us.snyk.io
             snyk auth "$SNYK_TOKEN"
             snyk code test --org="$SNYK_ORG"
 
