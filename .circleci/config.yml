@@ -14,7 +14,7 @@ jobs:
       - run:
           name: Install Snyk CLI locally
           command: |
-            npm install snyk --save-dev
+            npm install snyk --save-dev --unsafe-perm
             snyk auth $SNYK_TOKEN
       - run:
           name: Test with Snyk Open Source
