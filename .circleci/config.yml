@@ -32,4 +32,3 @@ workflows:
   snyk-workflow:
     jobs:
       - snyk-job
-
