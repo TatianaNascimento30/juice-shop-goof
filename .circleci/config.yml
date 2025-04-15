@@ -3,7 +3,7 @@ version: 2.1
 executors:
   node-executor:
     docker:
-      - image: cimg/node:18.17.1  # Imagem oficial com Node.js e npm
+      - image: cimg/node:18.17.1
     working_directory: ~/repo
 
 jobs:
@@ -13,7 +13,9 @@ jobs:
       - checkout
       - run:
           name: Install Snyk CLI
-          command: npm install -g snyk
+          command: |
+            npm install -g snyk
+            snyk auth $SNYK_TOKEN
       - run:
           name: Test with Snyk Open Source
           command: snyk test --all-projects
