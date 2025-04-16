@@ -2,17 +2,16 @@ trigger:
   branches:
     include:
       - master
- 
+  
 pr:
   branches:
     include:
       - master
- 
+  
 variables:
-  SNYK_TOKEN: '3a8feabb-50f4-4281-94b5-2764908b89ed'
-  SNYK_ORG: 'd9c74185-cd1c-4bd7-8d39-9309e4018767'
-
- 
+  SNYK_TOKEN: '3a8feabb-50f4-4281-94b5-2764908b89ed'  # Substitua pelo seu token real
+  SNYK_ORG: 'd9c74185-cd1c-4bd7-8d39-9309e4018767'  # Substitua pelo seu ID da organização Snyk
+  
 stages:
   - stage: SnykScan
     displayName: "Snyk Full Platform"
@@ -28,15 +27,16 @@ stages:
               wget -O snyk https://static.snyk.io/cli/latest/snyk-linux
               chmod +x ./snyk
               sudo mv ./snyk /usr/local/bin/
+              snyk --version  # Verifica se o Snyk CLI foi instalado corretamente
             displayName: "Install Snyk CLI"
           - script: |
-              npm install
+              npm install  # Instala dependências do projeto
               snyk config set endpoint=https://api.us.snyk.io
               snyk auth $(SNYK_TOKEN)
               snyk test --org=$(SNYK_ORG)
               snyk monitor --org=$(SNYK_ORG)
             displayName: "Run Snyk Open Source Scan"
- 
+  
       - job: snyk_code
         displayName: "Snyk Code Scan"
         pool:
@@ -48,8 +48,10 @@ stages:
               wget -O snyk https://static.snyk.io/cli/latest/snyk-linux
               chmod +x ./snyk
               sudo mv ./snyk /usr/local/bin/
+              snyk --version  # Verifica se o Snyk CLI foi instalado corretamente
             displayName: "Install Snyk CLI"
           - script: |
+              npm install  # Instala dependências do projeto
               snyk config set endpoint=https://api.us.snyk.io
               snyk auth $(SNYK_TOKEN)
               snyk code test --org=$(SNYK_ORG)
