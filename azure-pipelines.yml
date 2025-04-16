@@ -1,0 +1,56 @@
+trigger:
+  branches:
+    include:
+      - master
+ 
+pr:
+  branches:
+    include:
+      - master
+ 
+variables:
+  SNYK_TOKEN: '3a8feabb-50f4-4281-94b5-2764908b89ed'
+  SNYK_ORG: 'd9c74185-cd1c-4bd7-8d39-9309e4018767'
+
+ 
+stages:
+  - stage: SnykScan
+    displayName: "Snyk Full Platform"
+    jobs:
+      - job: snyk_os
+        displayName: "Snyk Open Source Scan"
+        pool:
+          vmImage: 'ubuntu-latest'
+        continueOnError: true
+        steps:
+          - checkout: self
+          - script: |
+              wget -O snyk https://static.snyk.io/cli/latest/snyk-linux
+              chmod +x ./snyk
+              sudo mv ./snyk /usr/local/bin/
+            displayName: "Install Snyk CLI"
+          - script: |
+              npm install
+              snyk config set endpoint=https://api.us.snyk.io
+              snyk auth $(SNYK_TOKEN)
+              snyk test --org=$(SNYK_ORG)
+              snyk monitor --org=$(SNYK_ORG)
+            displayName: "Run Snyk Open Source Scan"
+ 
+      - job: snyk_code
+        displayName: "Snyk Code Scan"
+        pool:
+          vmImage: 'ubuntu-latest'
+        continueOnError: true
+        steps:
+          - checkout: self
+          - script: |
+              wget -O snyk https://static.snyk.io/cli/latest/snyk-linux
+              chmod +x ./snyk
+              sudo mv ./snyk /usr/local/bin/
+            displayName: "Install Snyk CLI"
+          - script: |
+              snyk config set endpoint=https://api.us.snyk.io
+              snyk auth $(SNYK_TOKEN)
+              snyk code test --org=$(SNYK_ORG)
+            displayName: "Run Snyk Code Scan"
